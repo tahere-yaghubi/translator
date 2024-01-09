@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tkcalendar import Calendar
 
 class ExpenseTracker:
     def __init__(self, master):
         self.master = master
         self.master.title("Expense Tracker")
 
-        # Variables
+        # my Variables
         self.date_var = tk.StringVar()
         self.amount_var = tk.DoubleVar()
         self.description_var = tk.StringVar()
@@ -21,9 +22,11 @@ class ExpenseTracker:
         tk.Label(master, text="Description:").grid(row=2, column=0, padx=10, pady=5)
         tk.Entry(master, textvariable=self.description_var).grid(row=2, column=1, padx=10, pady=5)
 
-        # Button
+        # Button to add Expense
         tk.Button(master, text="Add Expense", command=self.add_expense).grid(row=3, column=0, columnspan=2, pady=10)
 
+        # Button to open the date picker
+        tk.Button(master, text="Pick Date", command=self.pick_date).grid(row=0, column=2, padx=10, pady=5)
         # Expense Table
         columns = ("Date", "Description", "Amount")
         self.tree = ttk.Treeview(master, columns=columns, show="headings", selectmode="browse")
@@ -40,6 +43,17 @@ class ExpenseTracker:
 
         # Initialize total expenses
         self.total_expenses = 0.0
+
+
+    def pick_date(self):
+        # Function to pick a date using the calendar widget
+        top = tk.Toplevel(self.master)
+        cal = Calendar(top, selectmode="day", year=2024, month=1, day=1)
+        cal.pack(padx=10, pady=10)
+
+        # Set the selected date to the date_var when the "OK" button is pressed
+        ok_button = tk.Button(top, text="OK", command=lambda: [self.date_var.set(cal.get_date()), top.destroy()])
+        ok_button.pack(pady=10)
 
     def add_expense(self):
         try:
@@ -64,7 +78,9 @@ class ExpenseTracker:
         except ValueError:
             messagebox.showwarning("Warning", "Please enter a valid amount.")
 
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = ExpenseTracker(root)
     root.mainloop()
+
